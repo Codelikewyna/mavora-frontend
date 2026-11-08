@@ -28,12 +28,26 @@ export interface User {
 export interface Wallet {
   id: string;
   userId: string;
+  username?: string;
+  email?: string;
   currency: string;
   availableUnits: number;
   pendingUnits: number;
   availableUsd: string;
   pendingUsd: string;
   status: string;
+}
+
+export interface WalletTransaction {
+  id: string;
+  senderUsername: string;
+  recipientUsername: string;
+  amountUsdc: number;
+  type: string;
+  status: string;
+  reference: string;
+  isIncoming: boolean;
+  timestamp: string;
 }
 
 export interface Product {

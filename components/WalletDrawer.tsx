@@ -20,6 +20,7 @@ interface WalletDrawerProps {
   wallet: Wallet | null;
   config: PublicConfig | null;
   onOpenDeposit: () => void;
+  onOpenTransfer?: () => void;
   isLoggedIn: boolean;
   onRequireAuth: () => void;
 }
@@ -30,6 +31,7 @@ export function WalletDrawer({
   wallet,
   config,
   onOpenDeposit,
+  onOpenTransfer,
   isLoggedIn,
   onRequireAuth,
 }: WalletDrawerProps) {
@@ -83,6 +85,13 @@ export function WalletDrawer({
               Denominated in Base USDC (1 USDC = 1,000,000 base units). Used for all instant marketplace purchases without gas fees.
             </p>
 
+            {wallet?.username && (
+              <div className="mt-3 flex items-center justify-between rounded-lg bg-black/40 px-3 py-1.5 text-[11px] text-zinc-400 border border-white/5">
+                <span>Account: <strong className="text-white font-medium">@{wallet.username}</strong></span>
+                {wallet.email && <span className="text-zinc-500 truncate max-w-[150px]">{wallet.email}</span>}
+              </div>
+            )}
+
             {wallet && Number(wallet.pendingUnits) > 0 && (
               <div className="mt-4 pt-3 border-t border-white/10 flex justify-between text-xs">
                 <span className="text-zinc-400">Pending Confirmations:</span>
@@ -111,14 +120,14 @@ export function WalletDrawer({
               onClick={() => {
                 if (!isLoggedIn) {
                   onRequireAuth();
-                } else {
-                  alert('Internal user-to-user transfers require a registered recipient username.');
+                } else if (onOpenTransfer) {
+                  onOpenTransfer();
                 }
               }}
               className="flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 py-3 px-4 text-sm font-medium text-zinc-200 hover:bg-white/10 transition"
             >
-              <Send className="h-4 w-4 text-zinc-400" />
-              Send USDC
+              <Send className="h-4 w-4 text-purple-400" />
+              Transfer USDC
             </button>
           </div>
 

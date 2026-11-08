@@ -14,6 +14,7 @@ import {
 import { Navbar } from '@/components/Navbar';
 import { WalletDrawer } from '@/components/WalletDrawer';
 import { DepositModal } from '@/components/DepositModal';
+import { TransferModal } from '@/components/TransferModal';
 import { AuthModal } from '@/components/AuthModal';
 import { ProductCard } from '@/components/ProductCard';
 import { CategoryPills } from '@/components/CategoryPills';
@@ -38,6 +39,7 @@ export default function Home() {
   // Modals
   const [isWalletOpen, setIsWalletOpen] = useState(false);
   const [isDepositOpen, setIsDepositOpen] = useState(false);
+  const [isTransferOpen, setIsTransferOpen] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
 
@@ -273,10 +275,10 @@ export default function Home() {
             <span className="font-bold text-zinc-300 font-sans tracking-tight">MAVORA</span>
             <span>· Web3 Digital Creative Marketplace</span>
           </div>
-          <div className="flex items-center gap-6">
-            <span>Primary Chain: Base ({config?.network || 'base-sepolia'})</span>
+          <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-zinc-400">
+            <span>Settlement: Base Network</span>
             <span>Currency: USDC</span>
-            <span>Ledger: Port 4000 NestJS API</span>
+            <span>Zero Gas Platform Ledger</span>
           </div>
         </div>
       </footer>
@@ -291,6 +293,10 @@ export default function Home() {
           setIsWalletOpen(false);
           setIsDepositOpen(true);
         }}
+        onOpenTransfer={() => {
+          setIsWalletOpen(false);
+          setIsTransferOpen(true);
+        }}
         isLoggedIn={!!user}
         onRequireAuth={() => {
           setIsWalletOpen(false);
@@ -303,6 +309,16 @@ export default function Home() {
         isOpen={isDepositOpen}
         onClose={() => setIsDepositOpen(false)}
         config={config}
+      />
+
+      <TransferModal
+        isOpen={isTransferOpen}
+        onClose={() => setIsTransferOpen(false)}
+        wallet={wallet}
+        token={token}
+        onSuccess={(updated) => {
+          setWallet(updated);
+        }}
       />
 
       <AuthModal

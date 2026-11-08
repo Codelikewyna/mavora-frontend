@@ -1,5 +1,5 @@
 import { API_BASE_URL } from './config';
-import { Product, Category, User, Wallet } from './types';
+import { Product, Category, User, Wallet, WalletTransaction } from './types';
 import { FALLBACK_CATEGORIES, getFilteredFallbackProducts } from './fallback-data';
 
 export async function fetchProducts(params: {
@@ -98,4 +98,118 @@ export async function fetchWallet(token: string): Promise<Wallet> {
   });
   if (!res.ok) throw new Error('Failed to fetch wallet');
   return res.json();
+}
+
+export async function transferFundsApi(
+  token: string,
+  data: {
+    recipientUsername: string;
+    amountUsdc: number;
+    password: string;
+  },
+) {
+  const res = await fetch(`${API_BASE_URL}/wallet/transfer`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+  const json = await res.json();
+  if (!res.ok) {
+    throw new Error(json.message || 'Transfer authorization failed');
+  }
+  return json;
+}
+
+export async function fetchTransactions(token: string): Promise<WalletTransaction[]> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/wallet/transactions`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      cache: 'no-store',
+    });
+    if (!res.ok) throw new Error('Failed to fetch transactions');
+    return await res.json();
+  } catch (err) {
+    console.warn('Failed to fetch transactions:', err);
+    return [];
+  }
+}
+
+export async function createProductApi(
+  token: string,
+  data: {
+    title: string;
+    description: string;
+    category: string;
+    subcategory?: string;
+    coverImageUrl: string;
+    priceUsdc: number;
+    productType?: 'regular' | 'nft';
+    isNft?: boolean;
+    licenseType?: 'personal' | 'commercial' | 'extended' | 'exclusive';
+    tags?: string[];
+  },
+) {
+  const res = await fetch(`${API_BASE_URL}/products`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+  const json = await res.json();
+  if (!res.ok) {
+    throw new Error(json.message || 'Failed to publish asset');
+  }
+  return json;
+}
+
+export async function fetchCreatorProducts(username: string): Promise<Product[]> {
+  try {
+    const res = await fetch(
+      `${API_BASE_URL}/products/creator/${encodeURIComponent(username)}`,
+      { cache: 'no-store' },
+    );
+    if (!res.ok) throw new Error('Failed to fetch creator products');
+    return await res.json();
+  } catch {
+    return [];
+  }
+}
+
+export async function uploadImageDirect(token: string, dataUri: string) {
+  const res = await fetch(`${API_BASE_URL}/uploads/direct`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ dataUri }),
+  });
+  const json = await res.json();
+  if (!res.ok) {
+    throw new Error(json.message || 'Image upload failed');
+  }
+  return json;
+}
+
+export async function fetchUserProfile(token: string) {
+  const res = await fetch(`${API_BASE_URL}/auth/me`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    cache: 'no-store',
+  });
+  const json = await res.json();
+  if (!res.ok) {
+    throw new Error(json.message || 'Failed to fetch user profile');
+  }
+  return json;
 }
