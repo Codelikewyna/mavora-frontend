@@ -60,6 +60,8 @@ export interface Product {
   tags: string[];
   isFeatured?: boolean;
   isTrending?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface Category {

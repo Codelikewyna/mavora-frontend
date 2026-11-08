@@ -18,7 +18,7 @@ export function DepositModal({ isOpen, onClose, config }: DepositModalProps) {
   if (!isOpen) return null;
 
   const depositAddress =
-    config?.depositWalletAddress || '0x71C568f6352932Ea7b4f535352614b0dfb2f33c9';
+    config?.depositWalletAddress || '0x185F76d90a6AE1568aC3AF2eD5fc635f18D0cfbB';
 
   const handleCopy = () => {
     navigator.clipboard.writeText(depositAddress);
