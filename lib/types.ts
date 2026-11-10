@@ -35,6 +35,8 @@ export interface Wallet {
   pendingUnits: number;
   availableUsd: string;
   pendingUsd: string;
+  availableBalance?: number;
+  pendingBalance?: number;
   status: string;
 }
 

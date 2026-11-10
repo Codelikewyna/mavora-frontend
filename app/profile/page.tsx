@@ -184,8 +184,24 @@ export default function ProfilePage() {
                 {/* Profile Actions */}
                 <div className="flex flex-wrap items-center gap-2.5">
                   <Link
+                    href="/manage-posts"
+                    className="flex items-center gap-1.5 rounded-xl border border-purple-500/30 bg-purple-500/10 hover:bg-purple-500/20 px-3.5 py-2 text-xs font-semibold text-purple-300 transition"
+                  >
+                    <Layers className="h-3.5 w-3.5" />
+                    Manage Posts
+                  </Link>
+
+                  <Link
+                    href="/transactions"
+                    className="flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 px-3.5 py-2 text-xs font-semibold text-zinc-200 transition"
+                  >
+                    <Clock className="h-3.5 w-3.5 text-purple-400" />
+                    Transactions
+                  </Link>
+
+                  <Link
                     href="/upload"
-                    className="flex items-center gap-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 px-4 py-2 text-xs font-semibold text-white transition shadow-lg shadow-purple-600/25"
+                    className="flex items-center gap-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 px-3.5 py-2 text-xs font-semibold text-white transition shadow-lg shadow-purple-600/25"
                   >
                     <Plus className="h-3.5 w-3.5" />
                     Upload Asset
@@ -193,7 +209,7 @@ export default function ProfilePage() {
 
                   <button
                     onClick={() => setIsTransferOpen(true)}
-                    className="flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 px-4 py-2 text-xs font-semibold text-zinc-200 transition"
+                    className="flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 px-3.5 py-2 text-xs font-semibold text-zinc-200 transition"
                   >
                     <Send className="h-3.5 w-3.5 text-purple-400" />
                     Transfer USDC
@@ -201,7 +217,7 @@ export default function ProfilePage() {
 
                   <button
                     onClick={() => setIsDepositOpen(true)}
-                    className="flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 px-4 py-2 text-xs font-semibold text-zinc-200 transition"
+                    className="flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 px-3.5 py-2 text-xs font-semibold text-zinc-200 transition"
                   >
                     <ArrowDownLeft className="h-3.5 w-3.5 text-emerald-400" />
                     Deposit

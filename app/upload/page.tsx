@@ -22,6 +22,7 @@ import { AuthModal } from '@/components/AuthModal';
 import { WalletDrawer } from '@/components/WalletDrawer';
 import { DepositModal } from '@/components/DepositModal';
 import { TransferModal } from '@/components/TransferModal';
+import { NotificationModal, NotificationType } from '@/components/NotificationModal';
 import { createProductApi, uploadImageDirect, fetchWallet } from '@/lib/api';
 import { FALLBACK_CATEGORIES } from '@/lib/fallback-data';
 import { User, Wallet, PublicConfig } from '@/lib/types';
@@ -69,6 +70,18 @@ export default function UploadPage() {
   const [error, setError] = useState<string | null>(null);
   const [publishedSlug, setPublishedSlug] = useState<string | null>(null);
 
+  const [notification, setNotification] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    type: NotificationType;
+  }>({
+    isOpen: false,
+    title: '',
+    message: '',
+    type: 'info',
+  });
+
   useEffect(() => {
     fetchPublicConfig().then(setConfig);
 
@@ -92,8 +105,8 @@ export default function UploadPage() {
       reader.onload = (e) => {
         const img = new Image();
         img.onload = () => {
-          const maxWidth = 1600;
-          const maxHeight = 1600;
+          const maxWidth = 1200;
+          const maxHeight = 1200;
           let { width, height } = img;
 
           if (width > maxWidth || height > maxHeight) {
@@ -113,7 +126,7 @@ export default function UploadPage() {
           if (!ctx) return reject(new Error('Canvas context unavailable'));
 
           ctx.drawImage(img, 0, 0, width, height);
-          const dataUri = canvas.toDataURL('image/jpeg', 0.88);
+          const dataUri = canvas.toDataURL('image/jpeg', 0.82);
           const approxBytes = Math.round((dataUri.length * 3) / 4);
           resolve({
             dataUri,
@@ -232,7 +245,17 @@ export default function UploadPage() {
 
       setPublishedSlug(created.slug || 'published');
     } catch (err: any) {
-      setError(err?.message || 'Failed to publish asset. Please verify input.');
+      let rawMsg = err?.message || 'Failed to publish asset. Please verify input.';
+      if (rawMsg.includes('413') || rawMsg.toLowerCase().includes('entity too large')) {
+        rawMsg = 'The image payload is too large for the network connection. We have auto-compressed your image, but please choose an asset under 10MB to complete upload.';
+      }
+      setError(rawMsg);
+      setNotification({
+        isOpen: true,
+        title: 'Upload Notice',
+        message: rawMsg,
+        type: 'error',
+      });
     } finally {
       setUploading(false);
     }
@@ -712,6 +735,14 @@ export default function UploadPage() {
         onSuccess={(updated) => {
           setWallet(updated);
         }}
+      />
+
+      <NotificationModal
+        isOpen={notification.isOpen}
+        onClose={() => setNotification((prev) => ({ ...prev, isOpen: false }))}
+        title={notification.title}
+        message={notification.message}
+        type={notification.type}
       />
     </div>
   );

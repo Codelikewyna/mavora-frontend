@@ -2,6 +2,23 @@ import { API_BASE_URL } from './config';
 import { Product, Category, User, Wallet, WalletTransaction } from './types';
 import { FALLBACK_CATEGORIES, getFilteredFallbackProducts } from './fallback-data';
 
+// Helper for resilient requests that timeout before freezing the UI
+async function fetchWithTimeout(url: string, options: RequestInit = {}, timeoutMs = 4000): Promise<Response> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const res = await fetch(url, {
+      ...options,
+      signal: controller.signal,
+    });
+    clearTimeout(timer);
+    return res;
+  } catch (err) {
+    clearTimeout(timer);
+    throw err;
+  }
+}
+
 export async function fetchProducts(params: {
   category?: string;
   search?: string;
@@ -21,9 +38,9 @@ export async function fetchProducts(params: {
     if (params.page) query.set('page', String(params.page));
     if (params.limit) query.set('limit', String(params.limit));
 
-    const res = await fetch(`${API_BASE_URL}/products?${query.toString()}`, {
+    const res = await fetchWithTimeout(`${API_BASE_URL}/products?${query.toString()}`, {
       cache: 'no-store',
-    });
+    }, 4500);
     if (!res.ok) throw new Error(`HTTP ${res.status}: Failed to fetch products`);
     const data = await res.json();
     if (data && Array.isArray(data.items) && data.items.length > 0) {
@@ -32,16 +49,16 @@ export async function fetchProducts(params: {
     // If backend returned empty database, provide the catalog
     return getFilteredFallbackProducts(params);
   } catch (err) {
-    console.warn('API fetchProducts failed, falling back to local catalog:', err);
+    console.warn('API fetchProducts fallback active:', err);
     return getFilteredFallbackProducts(params);
   }
 }
 
 export async function fetchCategories(): Promise<Category[]> {
   try {
-    const res = await fetch(`${API_BASE_URL}/products/categories`, {
+    const res = await fetchWithTimeout(`${API_BASE_URL}/products/categories`, {
       cache: 'no-store',
-    });
+    }, 4000);
     if (!res.ok) throw new Error(`HTTP ${res.status}: Failed to fetch categories`);
     const data = await res.json();
     if (Array.isArray(data) && data.length > 0) {
@@ -49,7 +66,7 @@ export async function fetchCategories(): Promise<Category[]> {
     }
     return FALLBACK_CATEGORIES;
   } catch (err) {
-    console.warn('API fetchCategories failed, falling back to local categories:', err);
+    console.warn('API fetchCategories fallback active:', err);
     return FALLBACK_CATEGORIES;
   }
 }
@@ -210,6 +227,38 @@ export async function fetchUserProfile(token: string) {
   const json = await res.json();
   if (!res.ok) {
     throw new Error(json.message || 'Failed to fetch user profile');
+  }
+  return json;
+}
+
+export async function fetchMyCreations(token: string): Promise<Product[]> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/products/me/creations`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      cache: 'no-store',
+    });
+    if (!res.ok) throw new Error('Failed to fetch personal creations');
+    return await res.json();
+  } catch (err) {
+    console.warn('fetchMyCreations fallback:', err);
+    return [];
+  }
+}
+
+export async function deleteProductApi(token: string, productId: string) {
+  const res = await fetch(`${API_BASE_URL}/products/${encodeURIComponent(productId)}`, {
+    method: 'DELETE',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  });
+  const json = await res.json();
+  if (!res.ok) {
+    throw new Error(json.message || 'Failed to delete asset');
   }
   return json;
 }

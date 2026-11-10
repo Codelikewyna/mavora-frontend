@@ -82,7 +82,7 @@ export function WalletDrawer({
               <span className="text-sm font-semibold text-purple-400">USDC</span>
             </div>
             <p className="text-[12px] text-zinc-400 leading-relaxed">
-              Denominated in Base USDC (1 USDC = 1,000,000 base units). Used for all instant marketplace purchases without gas fees.
+              Denominated in Base USDC. Used for all instant marketplace purchases without gas fees.
             </p>
 
             {wallet?.username && (

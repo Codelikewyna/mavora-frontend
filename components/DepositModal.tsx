@@ -15,6 +15,8 @@ export function DepositModal({ isOpen, onClose, config }: DepositModalProps) {
   const [txHash, setTxHash] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
+  const [showSuccessClaim, setShowSuccessClaim] = useState(false);
+
   if (!isOpen) return null;
 
   const depositAddress =
@@ -31,28 +33,63 @@ export function DepositModal({ isOpen, onClose, config }: DepositModalProps) {
     if (!txHash) return;
     setSubmitted(true);
     setTimeout(() => {
-      alert('Deposit claim submitted for automated verification on Base Sepolia.');
       setSubmitted(false);
-      setTxHash('');
-      onClose();
-    }, 1200);
+      setShowSuccessClaim(true);
+    }, 1000);
+  };
+
+  const handleClose = () => {
+    setShowSuccessClaim(false);
+    setTxHash('');
+    onClose();
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
       <div className="relative w-full max-w-lg rounded-2xl border border-white/10 bg-[#121622] p-6 shadow-2xl">
         <div className="flex items-center justify-between pb-4 border-b border-white/10">
-          <div>
-            <h3 className="text-lg font-bold text-white">Deposit USDC</h3>
-            <p className="text-xs text-zinc-400">Deposit USDC on the Base blockchain to your internal wallet</p>
+          <div className="flex items-center gap-3">
+            <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-purple-500/10 p-1 border border-purple-500/20 shadow-md">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/mavora-logo.png"
+                alt="Mavora Logo"
+                className="h-full w-full object-contain"
+              />
+            </div>
+            <div>
+              <h3 className="text-base font-bold text-white">Deposit USDC</h3>
+              <p className="text-xs text-zinc-400">Deposit USDC on Base blockchain to your internal wallet</p>
+            </div>
           </div>
           <button
-            onClick={onClose}
+            onClick={handleClose}
             className="p-1.5 text-zinc-400 hover:text-white rounded-lg hover:bg-white/5 transition"
           >
             <X className="h-5 w-5" />
           </button>
         </div>
+
+        {showSuccessClaim ? (
+          <div className="py-8 text-center space-y-4">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+              <Check className="h-8 w-8" />
+            </div>
+            <div>
+              <h4 className="text-lg font-bold text-white">Deposit Claim Submitted</h4>
+              <p className="text-xs text-zinc-400 mt-1.5 max-w-sm mx-auto">
+                Your transaction hash has been registered for automated verification on the Base ledger. Your internal balance will update upon block confirmation.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={handleClose}
+              className="mt-4 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 px-6 py-2.5 text-xs font-semibold text-white shadow"
+            >
+              Done
+            </button>
+          </div>
+        ) : (
 
         <div className="mt-5 space-y-5">
           {/* Network Warning */}
@@ -127,6 +164,7 @@ export function DepositModal({ isOpen, onClose, config }: DepositModalProps) {
             </button>
           </form>
         </div>
+        )}
       </div>
     </div>
   );

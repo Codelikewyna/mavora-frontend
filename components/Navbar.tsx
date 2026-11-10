@@ -13,6 +13,8 @@ import {
   Menu,
   X,
   Compass,
+  Layers,
+  Clock,
 } from 'lucide-react';
 import { PublicConfig, User, Wallet } from '@/lib/types';
 
@@ -102,17 +104,43 @@ export function Navbar({
           </Link>
 
           {user && (
-            <Link
-              href="/profile"
-              className={`px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 ${
-                pathname === '/profile'
-                  ? 'text-white bg-white/10'
-                  : 'text-zinc-400 hover:text-white hover:bg-white/5'
-              }`}
-            >
-              <UserIcon className="h-3.5 w-3.5" />
-              Profile
-            </Link>
+            <>
+              <Link
+                href="/manage-posts"
+                className={`px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 ${
+                  pathname === '/manage-posts'
+                    ? 'text-white bg-white/10'
+                    : 'text-zinc-400 hover:text-white hover:bg-white/5'
+                }`}
+              >
+                <Layers className="h-3.5 w-3.5" />
+                Manage Posts
+              </Link>
+
+              <Link
+                href="/transactions"
+                className={`px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 ${
+                  pathname === '/transactions'
+                    ? 'text-white bg-white/10'
+                    : 'text-zinc-400 hover:text-white hover:bg-white/5'
+                }`}
+              >
+                <Clock className="h-3.5 w-3.5" />
+                Transactions
+              </Link>
+
+              <Link
+                href="/profile"
+                className={`px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 ${
+                  pathname === '/profile'
+                    ? 'text-white bg-white/10'
+                    : 'text-zinc-400 hover:text-white hover:bg-white/5'
+                }`}
+              >
+                <UserIcon className="h-3.5 w-3.5" />
+                Profile
+              </Link>
+            </>
           )}
         </nav>
 
@@ -238,6 +266,28 @@ export function Navbar({
               <Plus className="h-3.5 w-3.5" />
               Upload Asset
             </Link>
+
+            {user && (
+              <>
+                <Link
+                  href="/manage-posts"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center justify-center gap-1.5 rounded-xl border border-white/10 bg-white/5 py-2.5 text-zinc-200"
+                >
+                  <Layers className="h-3.5 w-3.5" />
+                  Manage Posts
+                </Link>
+
+                <Link
+                  href="/transactions"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center justify-center gap-1.5 rounded-xl border border-white/10 bg-white/5 py-2.5 text-zinc-200"
+                >
+                  <Clock className="h-3.5 w-3.5" />
+                  Transactions
+                </Link>
+              </>
+            )}
           </div>
 
           {user ? (

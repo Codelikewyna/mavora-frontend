@@ -32,11 +32,12 @@ export function ProductCard({ product, onBuy }: ProductCardProps) {
     <div className="group relative flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#121622]/60 hover:bg-[#121622] transition-all duration-300 hover:border-purple-500/40 hover:shadow-xl hover:shadow-purple-500/5">
       {/* Image Container */}
       <div className="relative aspect-square w-full overflow-hidden bg-black/40">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+        <Image
           src={safeImageUrl}
           alt={product.title}
-          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+          fill
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
+          className="object-cover transition-transform duration-500 group-hover:scale-105"
           loading="lazy"
         />
 

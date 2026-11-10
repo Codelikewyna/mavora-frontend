@@ -6,7 +6,13 @@ export const metadata: Metadata = {
   description:
     "Discover, buy, and sell digital products, creative assets, and NFTs with an internal USDC wallet on Base.",
   icons: {
-    icon: "/mavora-logo.png",
+    icon: [
+      { url: '/mavora-logo.png', type: 'image/png' },
+      { url: '/favicon.ico' },
+      { url: '/favicon-32.png', sizes: '32x32', type: 'image/png' },
+    ],
+    shortcut: '/mavora-logo.png',
+    apple: '/apple-touch-icon.png',
   },
 };
 
